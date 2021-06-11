@@ -4,19 +4,17 @@ class PortfoliosController < ApplicationController
   end
 
   def new
-    @portfolio_items = Portfolio.new
+    @portfolio_item = Portfolio.new
   end
 
   def create
-    @portfolio_items = Portfolio.new(portfolio_params)
+    @portfolio_item = Portfolio.new(portfolio_params)
 
     respond_to do |format|
-      if @portfolio_items.save
-        format.html { redirect_to @portfolio_items, notice: "Portfolio was successfully created." }
-        format.json { render :show, status: :created, location: @portfolio_items }
+      if @portfolio_item.save
+        format.html { redirect_to @portfolio_item, notice: "Portfolio was successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @portfolio_items.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -28,18 +26,31 @@ class PortfoliosController < ApplicationController
   def update
     set_portfolio
     respond_to do |format|
-      if @portfolio_items.update( params.require(:portfolio).permit(:title, :subtitle,  :body))
+      if @portfolio_item.update( params.require(:portfolio).permit(:title, :subtitle,  :body))
         format.html { redirect_to portfolios_path, notice: 'The record successfully updated.' }
       else
         format.html { render :edit }
       end
     end
   end
+  
+  def show
+    set_portfolio
+  end
+
+  def destroy
+    @portfolio_item = Portfolio.find(params[:id])    
+    @portfolio_item.destroy
+    respond_to do |format|
+      format.html { redirect_to portfolios_path, notice: "Portfolio item was successfully deleted." }
+      format.json { head :no_content }
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_portfolio
-      @portfolio_items = Portfolio.find(params[:id])
+      @portfolio_item = Portfolio.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
